@@ -1,0 +1,10 @@
+/* styles.css */
+/* This file can be used for any global styles injected by the content script,
+   though currently, the overlay is styled via JavaScript. */
+
+/* Example:
+.my-custom-highlight {
+  background-color: yellow;
+  border: 1px solid orange;
+}
+*/

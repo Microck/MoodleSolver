@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MoodleSolver Configuration</title> <!-- Changed -->
+  <style> /* ... styles remain the same ... */ </style>
+</head>
+<body>
+  <h2>MoodleSolver Configuration</h2> <!-- Changed -->
+
+  <div class="container">
+    <label for="interPageDelay">Inter-Page Scraping Delay (ms):</label>
+    <input type="number" id="interPageDelay" value="500" min="100" step="100">
+    <small>Delay between navigating to each page when scraping all questions (e.g., 500-1000ms).</small>
+  </div>
+
+  <div class="container">
+    <label for="aiService">Select AI Service:</label>
+    <select id="aiService">
+      <option value="openai">OpenAI (ChatGPT)</option>
+      <option value="gemini">Google Gemini</option>
+      <option value="aimlapi">AIMLAPI.com</option>
+    </select>
+  </div>
+
+  <!-- OpenAI Specific -->
+  <div class="container service-config hidden" id="openaiConfig">
+    <label for="openaiApiKey">OpenAI API Key:</label>
+    <input type="password" id="openaiApiKey" placeholder="Enter your OpenAI API key">
+  </div>
+
+  <!-- Gemini Specific -->
+  <div class="container service-config hidden" id="geminiConfig">
+    <label for="geminiApiKey">Google Gemini API Key:</label>
+    <input type="password" id="geminiApiKey" placeholder="Enter your Google Gemini API key">
+  </div>
+
+  <!-- AIMLAPI.com Specific -->
+  <div class="container service-config hidden" id="aimlapiConfig">
+    <label for="aimlapiApiKey">AIMLAPI.com API Key:</label>
+    <input type="password" id="aimlapiApiKey" placeholder="Enter your AIMLAPI.com API key">
+    <label for="aimlapiModel">Select AIMLAPI.com Model:</label>
+    <select id="aimlapiModel">
+      <option value="gpt-4o-mini">GPT-4o mini (AIMLAPI)</option>
+      <option value="mistralai/Mistral-7B-Instruct-v0.2">Mistral-7B Instruct v0.2 (Example)</option>
+      <option value="NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO">Nous Hermes 2 Mixtral (Example)</option>
+      <option value="microsoft/Phi-3-mini-4k-instruct">Phi-3 Mini Instruct (Example)</option>
+    </select>
+  </div>
+
+  <button id="saveConfig">Save Configuration</button>
+  <div id="status"></div>
+
+  <script src="options.js"></script>
+</body>
+</html>
