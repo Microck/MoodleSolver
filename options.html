@@ -1,50 +1,96 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>MoodleSolver Configuration</title> <!-- Changed -->
-  <style> /* ... styles remain the same ... */ </style>
+  <title>MoodleSolver Configuration</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; width: 480px; background-color: #f4f4f4; color: #333; }
+    h2 { text-align: center; color: #333; margin-bottom: 25px; }
+    .container { margin-bottom: 15px; background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    label { display: block; margin-bottom: 6px; font-weight: bold; color: #555; }
+    input[type="text"], input[type="password"], input[type="number"], select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    select { margin-bottom: 15px; } /* More space after select */
+    .input-group { margin-bottom: 15px; } /* Group label and input */
+    .input-group small {
+        display: block;
+        font-size: 0.85em;
+        color: #777;
+        margin-top: -8px; /* Pull it closer to the input */
+        margin-bottom: 10px;
+    }
+    button {
+      background-color: #5cb85c;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      display: block;
+      width: 100%;
+    }
+    button:hover { background-color: #4cae4c; }
+    #status { margin-top: 20px; font-weight: bold; text-align: center; padding: 10px; border-radius: 4px;}
+    .status-success { background-color: #e6ffed; color: #28a745; border: 1px solid #c3e6cb;}
+    .status-error { background-color: #ffe6e6; color: #dc3545; border: 1px solid #f5c6cb;}
+    .hidden { display: none !important; } /* Added !important for robustness */
+  </style>
 </head>
 <body>
-  <h2>MoodleSolver Configuration</h2> <!-- Changed -->
+  <h2>MoodleSolver Configuration</h2>
 
   <div class="container">
-    <label for="interPageDelay">Inter-Page Scraping Delay (ms):</label>
-    <input type="number" id="interPageDelay" value="500" min="100" step="100">
-    <small>Delay between navigating to each page when scraping all questions (e.g., 500-1000ms).</small>
+    <div class="input-group">
+      <label for="interPageDelay">Inter-Page Scraping Delay (ms):</label>
+      <input type="number" id="interPageDelay" value="500" min="100" step="100">
+      <small>Delay between navigating to each page when scraping all questions (e.g., 300-1500ms).</small>
+    </div>
+
+    <div class="input-group">
+      <label for="aiService">Select AI Service:</label>
+      <select id="aiService">
+        <option value="openai">OpenAI (ChatGPT)</option>
+        <option value="gemini">Google Gemini</option>
+        <option value="aimlapi">AIMLAPI.com</option>
+      </select>
+    </div>
   </div>
 
-  <div class="container">
-    <label for="aiService">Select AI Service:</label>
-    <select id="aiService">
-      <option value="openai">OpenAI (ChatGPT)</option>
-      <option value="gemini">Google Gemini</option>
-      <option value="aimlapi">AIMLAPI.com</option>
-    </select>
-  </div>
-
-  <!-- OpenAI Specific -->
+  <!-- OpenAI Specific - Starts hidden -->
   <div class="container service-config hidden" id="openaiConfig">
     <label for="openaiApiKey">OpenAI API Key:</label>
     <input type="password" id="openaiApiKey" placeholder="Enter your OpenAI API key">
   </div>
 
-  <!-- Gemini Specific -->
+  <!-- Gemini Specific - Starts hidden -->
   <div class="container service-config hidden" id="geminiConfig">
     <label for="geminiApiKey">Google Gemini API Key:</label>
     <input type="password" id="geminiApiKey" placeholder="Enter your Google Gemini API key">
   </div>
 
-  <!-- AIMLAPI.com Specific -->
+  <!-- AIMLAPI.com Specific - Starts hidden, JS will unhide if selected -->
   <div class="container service-config hidden" id="aimlapiConfig">
-    <label for="aimlapiApiKey">AIMLAPI.com API Key:</label>
-    <input type="password" id="aimlapiApiKey" placeholder="Enter your AIMLAPI.com API key">
-    <label for="aimlapiModel">Select AIMLAPI.com Model:</label>
-    <select id="aimlapiModel">
-      <option value="gpt-4o-mini">GPT-4o mini (AIMLAPI)</option>
-      <option value="mistralai/Mistral-7B-Instruct-v0.2">Mistral-7B Instruct v0.2 (Example)</option>
-      <option value="NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO">Nous Hermes 2 Mixtral (Example)</option>
-      <option value="microsoft/Phi-3-mini-4k-instruct">Phi-3 Mini Instruct (Example)</option>
-    </select>
+    <div class="input-group">
+      <label for="aimlapiApiKey">AIMLAPI.com API Key:</label>
+      <input type="password" id="aimlapiApiKey" placeholder="Enter your AIMLAPI.com API key">
+    </div>
+    <div class="input-group">
+      <label for="aimlapiModel">Select AIMLAPI.com Model:</label>
+      <select id="aimlapiModel">
+        <option value="gpt-4o-mini">GPT-4o mini (AIMLAPI)</option>
+        <!-- Add other free models from AIMLAPI.com here based on their documentation -->
+        <option value="mistralai/Mistral-7B-Instruct-v0.2">Mistral-7B Instruct v0.2 (Example)</option>
+        <option value="NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO">Nous Hermes 2 Mixtral (Example)</option>
+        <option value="microsoft/Phi-3-mini-4k-instruct">Phi-3 Mini Instruct (Example)</option>
+      </select>
+    </div>
   </div>
 
   <button id="saveConfig">Save Configuration</button>
