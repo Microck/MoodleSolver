@@ -110,7 +110,3 @@ All primary functions are triggered by hotkeys when you are on an active Moodle 
 *   **"Receiving end does not exist" (Background Console Error):**
     *   Often indicates an issue in `content_script.js` where an asynchronous message handler does not `return true;` or an unhandled error prevents `sendResponse` from being called.
 
-
-## License (Example)
-
-MoodleSolver is licensed under the [MIT License](LICENSE.txt).
