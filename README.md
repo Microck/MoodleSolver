@@ -2,12 +2,11 @@
 
 **Version:** 1.5.2 (as per last file versions)
 
-![MoodleSolver](https://github.com/user-attachments/assets/c2767922-2b69-4135-bbc7-6394e9e9c3a2)
-
-
 A browser extension designed to aid in the analysis and interaction with web-based assessments, particularly those on Moodle platforms. It allows users to scrape question data, leverage AI services (OpenAI, Google Gemini, AIMLAPI.com) to determine answers, and automate interactions. This tool is intended for educational, research, or security testing purposes on platforms where you have explicit permission to conduct such automated testing.
 
 **Disclaimer:** *This tool automates interactions with web pages and AI services. Users are solely responsible for ensuring their use complies with the terms of service of any targeted website (e.g., Moodle instances) and any AI service provider. Misuse of this tool for academic dishonesty or unauthorized activities is strictly discouraged and is the responsibility of the user. API keys for AI services are required and are subject to the respective provider's terms and usage limits.*
+
+![MoodleSolver](https://github.com/user-attachments/assets/c2767922-2b69-4135-bbc7-6394e9e9c3a2)
 
 ## Core Features
 
