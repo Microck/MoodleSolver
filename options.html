@@ -3,7 +3,7 @@
 <head>
   <title>MoodleSolver Configuration</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; width: 480px; background-color: #f4f4f4; color: #333; }
+    body { font-family: Arial, sans-serif; padding: 20px; width: 450px; background-color: #f4f4f4; color: #333; }
     h2 { text-align: center; color: #333; margin-bottom: 25px; }
     .container { margin-bottom: 15px; background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     label { display: block; margin-bottom: 6px; font-weight: bold; color: #555; }
@@ -16,13 +16,13 @@
       border-radius: 4px;
       font-size: 14px;
     }
-    select { margin-bottom: 15px; } /* More space after select */
-    .input-group { margin-bottom: 15px; } /* Group label and input */
+    select { margin-bottom: 15px; }
+    .input-group { margin-bottom: 15px; }
     .input-group small {
         display: block;
         font-size: 0.85em;
         color: #777;
-        margin-top: -8px; /* Pull it closer to the input */
+        margin-top: -8px;
         margin-bottom: 10px;
     }
     button {
@@ -40,7 +40,7 @@
     #status { margin-top: 20px; font-weight: bold; text-align: center; padding: 10px; border-radius: 4px;}
     .status-success { background-color: #e6ffed; color: #28a745; border: 1px solid #c3e6cb;}
     .status-error { background-color: #ffe6e6; color: #dc3545; border: 1px solid #f5c6cb;}
-    .hidden { display: none !important; } /* Added !important for robustness */
+    /* .hidden { display: none !important; } This class is no longer strictly needed as we only have one service config */
   </style>
 </head>
 <body>
@@ -53,30 +53,17 @@
       <small>Delay between navigating to each page when scraping all questions (e.g., 300-1500ms).</small>
     </div>
 
-    <div class="input-group">
+    <!-- AI Service selection removed as only AIMLAPI is supported -->
+    <!-- <div class="input-group">
       <label for="aiService">Select AI Service:</label>
       <select id="aiService">
-        <option value="openai">OpenAI (ChatGPT)</option>
-        <option value="gemini">Google Gemini</option>
         <option value="aimlapi">AIMLAPI.com</option>
       </select>
-    </div>
+    </div> -->
   </div>
 
-  <!-- OpenAI Specific - Starts hidden -->
-  <div class="container service-config hidden" id="openaiConfig">
-    <label for="openaiApiKey">OpenAI API Key:</label>
-    <input type="password" id="openaiApiKey" placeholder="Enter your OpenAI API key">
-  </div>
-
-  <!-- Gemini Specific - Starts hidden -->
-  <div class="container service-config hidden" id="geminiConfig">
-    <label for="geminiApiKey">Google Gemini API Key:</label>
-    <input type="password" id="geminiApiKey" placeholder="Enter your Google Gemini API key">
-  </div>
-
-  <!-- AIMLAPI.com Specific - Starts hidden, JS will unhide if selected -->
-  <div class="container service-config hidden" id="aimlapiConfig">
+  <!-- AIMLAPI.com Specific - This is now the only AI config -->
+  <div class="container service-config" id="aimlapiConfig"> <!-- Removed 'hidden' class -->
     <div class="input-group">
       <label for="aimlapiApiKey">AIMLAPI.com API Key:</label>
       <input type="password" id="aimlapiApiKey" placeholder="Enter your AIMLAPI.com API key">
