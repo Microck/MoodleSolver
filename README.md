@@ -78,12 +78,18 @@ Tip: You can change keyboard shortcuts at chrome://extensions/shortcuts.
 
 ## Hotkeys (default)
 
-- Ctrl+Alt+I — Scrape All Data & Run AI (batch + vision where needed).
-- Ctrl+Alt+X — Answer Current Page (uses stored AI result).
-- Ctrl+Alt+C — Ensure Data Processed (no page clicking).
-- Ctrl+Alt+S — Rescan Current Page (refresh cache for active page only).
-- Ctrl+Alt+D — Toggle Debug Overlay (in-page log).
-- Ctrl+Alt+R — Clear Stored Data (quizData/processed results).
+Only up to four shortcuts can be pre‑defined by Chrome extensions.  
+You can edit or add the rest manually at **chrome://extensions/shortcuts**.
+
+Default bindings:
+- **Ctrl + Shift + I** — Scrape All Data & Run AI (batch + vision where needed)
+- **Ctrl + Shift + X** — Answer Current Page
+- **Ctrl + Shift + C** — Ensure All Data Processed (no page clicks)
+- **Ctrl + Shift + R** — Clear Stored Data
+
+Optional / user‑assignable (set manually in chrome://extensions/shortcuts):
+- `rescan_current_page` → rescan the active page
+- `toggle_debug_overlay` → toggle the on‑screen log overlay
 
 These can be changed at chrome://extensions/shortcuts.
 
