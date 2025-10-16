@@ -1,0 +1,69 @@
+{
+  "manifest_version": 3,
+  "name": "MoodleSolver",
+  "version": "1.7.0",
+  "description": "Assists in solving Moodle-based assessments with stealth scraping, text+vision AI, and detailed logging.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "tabs",
+    "contextMenus",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://aulasvirtuales.educastur.es/*",
+    "https://api.openai.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://api.aimlapi.com/*",
+    "https://api.moonshot.ai/*",
+    "https://api-sg.moonshot.ai/*",
+    "https://api.moonshot.cn/*"
+  ],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["https://aulasvirtuales.educastur.es/mod/quiz/attempt.php*"],
+      "js": ["content_script.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "options_page": "options.html",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/icon16.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+  "commands": {
+    "get_all_data": {
+      "suggested_key": { "default": "Ctrl+Shift+I", "mac": "Command+Shift+I" },
+      "description": "Scrape all quiz questions & run AI processing (stealth if enabled)."
+    },
+    "answer_current_question": {
+      "suggested_key": { "default": "Ctrl+Shift+X", "mac": "Command+Shift+X" },
+      "description": "Select the AI‑calculated answer for the current question page."
+    },
+    "answer_all_questions": {
+      "suggested_key": { "default": "Ctrl+Shift+C", "mac": "Command+Shift+C" },
+      "description": "Ensure all questions are scraped & processed by AI (no clicks)."
+    },
+    "clear_stored_data": {
+      "suggested_key": { "default": "Ctrl+Shift+R", "mac": "Command+Shift+R" },
+      "description": "Clear all stored quiz data and AI answers."
+    },
+    "rescan_current_page": {
+      "description": "Re‑scrape only the current question page and refresh cache."
+    },
+    "toggle_debug_overlay": {
+      "description": "Toggle the on‑screen debug log overlay."
+    }
+  }
+}

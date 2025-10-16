@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AI Service Configuration</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        width: 540px;
+        background-color: #f4f4f4;
+        color: #333;
+      }
+      h2 {
+        text-align: center;
+        color: #333;
+      }
+      .container {
+        margin-bottom: 20px;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+      input[type="text"],
+      input[type="password"],
+      input[type="number"],
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        background-color: #5cb85c;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-right: 6px;
+      }
+      button:hover {
+        background-color: #4cae4c;
+      }
+      #status {
+        margin-top: 15px;
+        font-weight: bold;
+        text-align: center;
+      }
+      .hidden {
+        display: none;
+      }
+      small.mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        color: #666;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+      .row > div {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Configuration</h2>
+
+    <div class="container">
+      <label for="interPageDelay">Inter-Page Scraping Delay (ms):</label>
+      <input
+        type="number"
+        id="interPageDelay"
+        value="800"
+        min="100"
+        step="100"
+      />
+      <small class="mono"
+        >Delay between navigating pages while scraping (e.g., 800-1200ms).</small
+      >
+    </div>
+
+    <div class="container">
+      <label for="aiService">Select AI Service:</label>
+      <select id="aiService">
+        <option value="openai">OpenAI</option>
+        <option value="gemini">Google Gemini</option>
+        <option value="aimlapi">AIMLAPI.com</option>
+        <option value="moonshot">Moonshot Kimi K2</option>
+      </select>
+    </div>
+
+    <div class="container service-config hidden" id="openaiConfig">
+      <label for="openaiApiKey">OpenAI API Key:</label>
+      <input
+        type="password"
+        id="openaiApiKey"
+        placeholder="Enter your OpenAI API key"
+      />
+    </div>
+
+    <div class="container service-config hidden" id="geminiConfig">
+      <label for="geminiApiKey">Google Gemini API Key:</label>
+      <input
+        type="password"
+        id="geminiApiKey"
+        placeholder="Enter your Google Gemini API key"
+      />
+    </div>
+
+    <div class="container service-config hidden" id="aimlapiConfig">
+      <label for="aimlapiApiKey">AIMLAPI.com API Key:</label>
+      <input
+        type="password"
+        id="aimlapiApiKey"
+        placeholder="Enter your AIMLAPI.com API key"
+      />
+      <label for="aimlapiModel">AIMLAPI.com Model:</label>
+      <select id="aimlapiModel">
+        <option value="gpt-4o-mini">GPT-4o mini (AIMLAPI)</option>
+        <option value="mistralai/Mistral-7B-Instruct-v0.2">
+          Mistral-7B Instruct v0.2
+        </option>
+        <option value="NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO">
+          Nous Hermes 2 Mixtral
+        </option>
+        <option value="microsoft/Phi-3-mini-4k-instruct">
+          Phi-3 Mini Instruct
+        </option>
+      </select>
+    </div>
+
+    <div class="container service-config hidden" id="moonshotConfig">
+      <label for="moonshotApiKey">Kimi API Key:</label>
+      <input
+        type="password"
+        id="moonshotApiKey"
+        placeholder="Enter your Kimi API key"
+      />
+      <div class="row">
+        <div>
+          <label for="moonshotModelText">Text Model:</label>
+          <input type="text" id="moonshotModelText" value="kimi-k2-0905-preview" />
+        </div>
+        <div>
+          <label for="moonshotModelVision">Vision Model:</label>
+          <input
+            type="text"
+            id="moonshotModelVision"
+            value="moonshot-v1-128k-vision-preview"
+          />
+        </div>
+      </div>
+      <small class="mono"
+        >Vision is used only for questions that contain images.</small
+      >
+    </div>
+
+    <div class="container">
+      <label>Stealth Scanning:</label>
+      <div>
+        <input type="checkbox" id="stealthScanEnabled" />
+        <label for="stealthScanEnabled" style="display: inline"
+          >Scan in background</label
+        >
+      </div>
+      <label for="stealthScanMode">Mode:</label>
+      <select id="stealthScanMode">
+        <option value="backgroundTab">Background tab (same window)</option>
+        <option value="minimizedWindow">Minimized window</option>
+      </select>
+      <div>
+        <input type="checkbox" id="stealthCloseOnFinish" checked />
+        <label for="stealthCloseOnFinish" style="display: inline"
+          >Close when done</label
+        >
+      </div>
+    </div>
+
+    <div class="container">
+      <label>Safety Toggles:</label>
+      <div>
+        <input type="checkbox" id="dryRun" />
+        <label for="dryRun" style="display: inline">Dry-run (no clicks)</label>
+      </div>
+      <div class="row">
+        <div>
+          <label for="slowMoAnswerDelay">Slow-mo answering (ms):</label>
+          <input type="number" id="slowMoAnswerDelay" value="2000" min="0" />
+        </div>
+        <div>
+          <label for="maxPagesPerRun">Max pages per run (0=all):</label>
+          <input type="number" id="maxPagesPerRun" value="0" min="0" />
+        </div>
+      </div>
+      <small class="mono"
+        >Slow-mo applies to sequential auto-answering. Max pages limits scraping.</small
+      >
+    </div>
+
+    <div class="container">
+      <label>Import / Export Config:</label>
+      <button id="exportConfig">Export</button>
+      <button id="importConfig">Import</button>
+      <input id="importFile" type="file" accept=".json" class="hidden" />
+    </div>
+
+    <div class="container">
+      <button id="saveConfig">Save Configuration</button>
+      <button id="validateKeys">Validate Keys</button>
+      <div id="status"></div>
+    </div>
+
+    <script src="options.js"></script>
+  </body>
+</html>
