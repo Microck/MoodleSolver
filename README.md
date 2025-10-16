@@ -49,7 +49,7 @@ This tool is intended for educational, research, or security testing purposes on
 
 Open the Options page by right-clicking the extension icon and selecting **"Options"**.
 
-<img width="auto" height="340" alt="config" src="https://github.com/user-attachments/assets/9216f292-b550-4f74-9943-4e2b2165b55f" />
+<img width="auto" height="700" alt="config" src="https://github.com/user-attachments/assets/9216f292-b550-4f74-9943-4e2b2165b55f" />
 
 
 | Setting Group | Configuration Details |
