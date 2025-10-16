@@ -43,13 +43,25 @@ This tool is intended for educational, research, or security testing purposes on
 4.  Click **Load unpacked** and select the extension's root folder.
 5.  Pin the extension's icon to your toolbar for easy access.
 
-<img width="1919" height="598" alt="extensions" src="https://github.com/user-attachments/assets/26e7f54a-2763-4d95-bc0b-c6c59a1e766f" style="display: block; margin-left: auto; margin-right: auto;"/>
+<p align="center">
+  <img
+    src="https://github.com/user-attachments/assets/26e7f54a-2763-4d95-bc0b-c6c59a1e766f"
+    alt="extensions"
+    width="1919"
+    height="598">
+</p>
 
 ## **Configuration**
 
 Open the Options page by right-clicking the extension icon and selecting **"Options"**.
 
-<img width="auto" height="700" alt="config" src="https://github.com/user-attachments/assets/9216f292-b550-4f74-9943-4e2b2165b55f" style="display: block; margin-left: auto; margin-right: auto;"/>
+<p align="center">
+  <img
+    src="https://github.com/user-attachments/assets/9216f292-b550-4f74-9943-4e2b2165b55f"
+    alt="config"
+    width="auto"
+    height="700">
+</p>
 
 
 
@@ -95,7 +107,13 @@ When on a Moodle quiz page, right-click to access these actions without hotkeys:
 -   Show Answers Overlay
 -   Clear Stored Data
 
-<img width="568" height="315" alt="rclick" src="https://github.com/user-attachments/assets/b26cdfe1-aa7e-4baa-87e8-42d22caf5498" style="display: block; margin-left: auto; margin-right: auto;"/>
+<p align="center">
+  <img
+    src="https://github.com/user-attachments/assets/b26cdfe1-aa7e-4baa-87e8-42d22caf5498"
+    alt="right-click context menu"
+    width="568"
+    height="315">
+</p>
 
 
 ## **Token & Time Reporting**
