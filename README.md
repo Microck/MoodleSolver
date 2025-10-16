@@ -43,13 +43,14 @@ This tool is intended for educational, research, or security testing purposes on
 4.  Click **Load unpacked** and select the extension's root folder.
 5.  Pin the extension's icon to your toolbar for easy access.
 
-<!-- (Suggestion: Place a screenshot here showing the chrome://extensions page with arrows pointing to "Developer mode" and "Load unpacked".) -->
+<img width="1919" height="598" alt="extensions" src="https://github.com/user-attachments/assets/26e7f54a-2763-4d95-bc0b-c6c59a1e766f" />
 
 ## **Configuration**
 
 Open the Options page by right-clicking the extension icon and selecting **"Options"**.
 
-<!-- (Suggestion: Place a full screenshot here of the options.html page, showing all the new settings like Stealth Scanning and Safety Toggles.) -->
+<img width="537" height="949" alt="config" src="https://github.com/user-attachments/assets/9216f292-b550-4f74-9943-4e2b2165b55f" />
+
 
 | Setting Group | Configuration Details |
 | :--- | :--- |
