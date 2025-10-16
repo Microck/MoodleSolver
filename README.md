@@ -49,7 +49,7 @@ This tool is intended for educational, research, or security testing purposes on
 
 Open the Options page by right-clicking the extension icon and selecting **"Options"**.
 
-<img width="537" height="949" alt="config" src="https://github.com/user-attachments/assets/9216f292-b550-4f74-9943-4e2b2165b55f" />
+<img width="auto" height="340" alt="config" src="https://github.com/user-attachments/assets/9216f292-b550-4f74-9943-4e2b2165b55f" />
 
 
 | Setting Group | Configuration Details |
@@ -94,7 +94,8 @@ When on a Moodle quiz page, right-click to access these actions without hotkeys:
 -   Show Answers Overlay
 -   Clear Stored Data
 
-<!-- (Suggestion: Place a screenshot here of the right-click context menu open on a Moodle page.) -->
+<img width="568" height="315" alt="rclick" src="https://github.com/user-attachments/assets/b26cdfe1-aa7e-4baa-87e8-42d22caf5498" />
+
 
 ## **Token & Time Reporting**
 
