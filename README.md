@@ -52,6 +52,7 @@ Open the Options page by right-clicking the extension icon and selecting **"Opti
 <img width="auto" height="700" alt="config" align="center" src="https://github.com/user-attachments/assets/9216f292-b550-4f74-9943-4e2b2165b55f" />
 
 
+
 | Setting Group | Configuration Details |
 | :--- | :--- |
 | **General** | **Inter-Page Delay (ms):** `800-1200` recommended to allow images to fully load during scraping. |
