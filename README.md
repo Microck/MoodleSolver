@@ -69,20 +69,17 @@ large quizzes are auto‑sliced to respect token limits. all operations run loca
 
 ## installation
 
-prereqs  
+prereqs:
 - chrome or chromium‑based browser
 - valid api key for your selected provider
 
-steps  
-```bash
+steps:
 1. open chrome → chrome://extensions
 2. enable "developer mode"
 3. click "load unpacked"
 4. select the moodlesolver root folder
 5. open options → set keys + preferences
-```
 
-pin the icon for quick access.
 
 <p align="center">
   <img
@@ -100,7 +97,7 @@ open the options page by right‑clicking the extension icon → **options**.
 
 <p align="center">
   <img
-    src="https://github.com/user-attachments/assets/9216f292-b550-4f74-9943-4e2b2165b55f"
+    src="https://github.com/user-attachments/assets/5e7c7fe8-1f31-40d4-a816-7f8a2a00d99b"
     alt="config"
     width="auto"
     height="700">
