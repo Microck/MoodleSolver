@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Security Test Assistant</title>
+    <title>MoodleSolver</title>
     <style>
       body {
         width: 350px;
@@ -70,21 +70,28 @@
       .log-info {
         color: blue;
       }
+      .shortcut-key {
+        color: #111;
+        background: #eef2ff;
+        border: 1px solid #c7d2fe;
+        border-radius: 4px;
+        padding: 1px 6px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 12px;
+      }
+      .cmd-desc {
+        display: inline-block;
+        margin-right: 6px;
+      }
     </style>
   </head>
   <body>
-    <h3>Test Assistant</h3>
+    <h3>MoodleSolver</h3>
     <div id="configStatus">Loading config...</div>
-    <p>Available Hotkeys:</p>
-    <ul>
-      <li><strong>Ctrl+Alt+I:</strong> Scrape All Data & AI (Batch)</li>
-      <li><strong>Ctrl+Alt+X:</strong> Answer Current Page</li>
-      <li><strong>Ctrl+Alt+C:</strong> Ensure Data Processed</li>
-      <li><strong>Ctrl+Alt+S:</strong> Rescan Current Page</li>
-      <li><strong>Ctrl+Alt+D:</strong> Toggle Debug Overlay</li>
-      <li><strong>Ctrl+Alt+R:</strong> Clear Stored Quiz Data</li>
-    </ul>
+    <p>Available commands and shortcuts:</p>
+    <ul id="commandsList" aria-live="polite" aria-label="Commands and shortcuts"></ul>
     <button id="openOptions">Configure AI</button>
+    <button id="openShortcuts" title="Open Chrome shortcuts settings">Manage Shortcuts</button>
     <button id="clearLogsButton">Clear Debug Logs</button>
 
     <h4>Debug Log:</h4>

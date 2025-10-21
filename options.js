@@ -2,7 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const interPageDelayInput = document.getElementById("interPageDelay");
   const aiServiceSelect = document.getElementById("aiService");
   const openaiApiKeyInput = document.getElementById("openaiApiKey");
+  const openaiModelInput = document.getElementById("openaiModel");
   const geminiApiKeyInput = document.getElementById("geminiApiKey");
+  const geminiModelInput = document.getElementById("geminiModel");
   const aimlapiApiKeyInput = document.getElementById("aimlapiApiKey");
   const aimlapiModelSelect = document.getElementById("aimlapiModel");
   const moonshotApiKeyInput = document.getElementById("moonshotApiKey");
@@ -24,6 +26,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const saveButton = document.getElementById("saveConfig");
   const validateButton = document.getElementById("validateKeys");
   const statusDiv = document.getElementById("status");
+  // Reporting fields
+  const reportEnabledInput = document.getElementById("reportEnabled");
+  const reportIncludeDetailsInput = document.getElementById("reportIncludeDetails");
+  const reportIncludeTimingInput = document.getElementById("reportIncludeTiming");
+  const reportFilenamePrefixInput = document.getElementById("reportFilenamePrefix");
+  const reportSaveAsSelect = document.getElementById("reportSaveAs");
+  // (Stealth show answer is hotkey-only; no toggle input)
+
+  // Hotkey fields
+  const hk = {
+    get_all_data: document.getElementById("hk_get_all_data"),
+    answer_current_question: document.getElementById("hk_answer_current"),
+    answer_all_questions: document.getElementById("hk_answer_all"),
+    clear_stored_data: document.getElementById("hk_clear"),
+    rescan_current_page: document.getElementById("hk_rescan"),
+    toggle_debug_overlay: document.getElementById("hk_overlay"),
+    stealth_show_answer: document.getElementById("hk_stealth_show"),
+  };
+  const hotkeyWarning = document.getElementById("hotkeyWarning");
+  const defaultHotkeys = {
+    get_all_data: "Alt+Shift+G",
+    answer_current_question: "Alt+Shift+A",
+    answer_all_questions: "Alt+Shift+E",
+    clear_stored_data: "Alt+Shift+K",
+    rescan_current_page: "Alt+Shift+S",
+    toggle_debug_overlay: "Alt+Shift+D",
+    stealth_show_answer: "",
+  };
 
   const openaiConfigDiv = document.getElementById("openaiConfig");
   const geminiConfigDiv = document.getElementById("geminiConfig");
@@ -51,7 +81,9 @@ document.addEventListener("DOMContentLoaded", () => {
       "interPageDelay",
       "selectedAiService",
       "openaiApiKey",
+      "openaiModel",
       "geminiApiKey",
+      "geminiModel",
       "aimlapiApiKey",
       "aimlapiModel",
       "moonshotApiKey",
@@ -62,7 +94,15 @@ document.addEventListener("DOMContentLoaded", () => {
       "stealthCloseOnFinish",
       "dryRun",
       "slowMoAnswerDelay",
-      "maxPagesPerRun"
+      "maxPagesPerRun",
+      // reporting
+      "reportEnabled",
+      "reportIncludeDetails",
+      "reportIncludeTiming",
+      "reportFilenamePrefix",
+      "reportSaveAs",
+      // hotkeys
+      "customHotkeys"
     ],
     (data) => {
       if (chrome.runtime.lastError) {
@@ -76,7 +116,9 @@ document.addEventListener("DOMContentLoaded", () => {
       toggleConfigVisibility();
 
       if (data.openaiApiKey) openaiApiKeyInput.value = data.openaiApiKey;
+  openaiModelInput.value = data.openaiModel || "gpt-4o-mini";
       if (data.geminiApiKey) geminiApiKeyInput.value = data.geminiApiKey;
+  geminiModelInput.value = data.geminiModel || "gemini-1.0-pro";
       if (data.aimlapiApiKey) aimlapiApiKeyInput.value = data.aimlapiApiKey;
       if (data.aimlapiModel) aimlapiModelSelect.value = data.aimlapiModel;
 
@@ -93,6 +135,24 @@ document.addEventListener("DOMContentLoaded", () => {
       dryRunInput.checked = !!data.dryRun;
       slowMoAnswerDelayInput.value = data.slowMoAnswerDelay ?? 2000;
       maxPagesPerRunInput.value = data.maxPagesPerRun ?? 0;
+
+      // Reporting defaults
+      if (reportEnabledInput) reportEnabledInput.checked = data.reportEnabled !== false;
+      if (reportIncludeDetailsInput) reportIncludeDetailsInput.checked = data.reportIncludeDetails !== false;
+      if (reportIncludeTimingInput) reportIncludeTimingInput.checked = data.reportIncludeTiming !== false;
+      if (reportFilenamePrefixInput) reportFilenamePrefixInput.value = data.reportFilenamePrefix || "AI_TokenReport";
+      if (reportSaveAsSelect) reportSaveAsSelect.value = String(data.reportSaveAs === true);
+
+  // (no UI toggle for stealth show answer)
+
+      // Hotkeys load
+      const loadedHotkeys = data.customHotkeys || {};
+      Object.entries(hk).forEach(([cmd, el]) => {
+        if (!el) return;
+        const val = loadedHotkeys[cmd] || defaultHotkeys[cmd] || "";
+        el.value = val;
+      });
+      checkHotkeyConflicts();
     }
   );
 
@@ -101,7 +161,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedAiService = aiServiceSelect.value;
 
     const openaiKey = (openaiApiKeyInput.value || "").trim();
+  const openaiModel = (openaiModelInput.value || "").trim() || "gpt-4o-mini";
     const geminiKey = (geminiApiKeyInput.value || "").trim();
+  const geminiModel = (geminiModelInput.value || "").trim() || "gemini-1.0-pro";
     const aimlapiKey = (aimlapiApiKeyInput.value || "").trim();
     const aimlapiModel = aimlapiModelSelect.value;
 
@@ -117,12 +179,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const slowMoAnswerDelay = parseInt(slowMoAnswerDelayInput.value, 10) || 0;
     const maxPagesPerRun = parseInt(maxPagesPerRunInput.value, 10) || 0;
 
+    // Reporting
+    const reportEnabled = reportEnabledInput ? !!reportEnabledInput.checked : true;
+    const reportIncludeDetails = reportIncludeDetailsInput ? !!reportIncludeDetailsInput.checked : true;
+    const reportIncludeTiming = reportIncludeTimingInput ? !!reportIncludeTimingInput.checked : true;
+    const reportFilenamePrefix = reportFilenamePrefixInput ? ((reportFilenamePrefixInput.value || "AI_TokenReport").trim() || "AI_TokenReport") : "AI_TokenReport";
+    const reportSaveAs = reportSaveAsSelect ? reportSaveAsSelect.value === "true" : false;
+
+    // Hotkeys collect
+    const customHotkeys = {};
+    Object.entries(hk).forEach(([cmd, el]) => {
+      if (el && el.value) customHotkeys[cmd] = el.value.trim();
+    });
+
     chrome.storage.local.set(
       {
         interPageDelay,
         selectedAiService,
         openaiApiKey: openaiKey,
+  openaiModel,
         geminiApiKey: geminiKey,
+  geminiModel,
         aimlapiApiKey: aimlapiKey,
         aimlapiModel,
         moonshotApiKey: moonshotKey,
@@ -133,7 +210,15 @@ document.addEventListener("DOMContentLoaded", () => {
         stealthCloseOnFinish,
         dryRun,
         slowMoAnswerDelay,
-        maxPagesPerRun
+        maxPagesPerRun,
+        // reporting
+        reportEnabled,
+        reportIncludeDetails,
+        reportIncludeTiming,
+        reportFilenamePrefix,
+        reportSaveAs,
+        // hotkeys
+        customHotkeys
       },
       async () => {
         if (chrome.runtime.lastError) {
@@ -155,6 +240,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
   validateButton.addEventListener("click", validateSelectedKey);
 
+  // ----- Hotkey utilities -----
+  function canonicalizeCombo(e) {
+    const parts = [];
+    if (e.ctrlKey || e.key.toLowerCase() === "control") parts.push("Ctrl");
+    if (e.metaKey || e.key.toLowerCase() === "meta") parts.push("Meta");
+    if (e.altKey || e.key.toLowerCase() === "alt") parts.push("Alt");
+    if (e.shiftKey || e.key.toLowerCase() === "shift") parts.push("Shift");
+    const k = e.key.length === 1 ? e.key.toUpperCase() : e.key;
+    if (!['Control','Shift','Alt','Meta'].includes(k)) parts.push(k);
+    return parts.join("+");
+  }
+  function attachHotkey(el) {
+    if (!el) return;
+    el.addEventListener("keydown", (e) => {
+      e.preventDefault();
+      const combo = canonicalizeCombo(e);
+      el.value = combo;
+      checkHotkeyConflicts();
+    });
+    el.addEventListener("focus", () => {
+      if (hotkeyWarning) {
+        hotkeyWarning.textContent = "Press desired combination (e.g., Alt+Shift+G).";
+        hotkeyWarning.style.color = "#92400e";
+      }
+    });
+    el.addEventListener("blur", () => checkHotkeyConflicts());
+  }
+  Object.values(hk).forEach(attachHotkey);
+  function checkHotkeyConflicts() {
+    if (!hotkeyWarning) return;
+    const values = Object.entries(hk)
+      .map(([cmd, el]) => ({ cmd, val: (el?.value || '').trim() }))
+      .filter(v => v.val);
+    const duplicates = values.filter((v, i, arr) => arr.findIndex(w => w.val.toLowerCase() === v.val.toLowerCase()) !== i);
+    const blocked = new Set(["Ctrl+R","Ctrl+W","F5","Alt+F4","Ctrl+Shift+I","Ctrl+Shift+C"]);
+    const bad = values.filter(v => blocked.has(v.val));
+    if (duplicates.length || bad.length) {
+      const du = Array.from(new Set(duplicates.map(d => d.val))).join(", ");
+      const bd = Array.from(new Set(bad.map(d => d.val))).join(", ");
+      const msgs = [];
+      if (duplicates.length) msgs.push(`Duplicate: ${du}`);
+      if (bad.length) msgs.push(`May conflict with browser: ${bd}`);
+      hotkeyWarning.textContent = msgs.join(" | ");
+      hotkeyWarning.style.color = "#b91c1c";
+    } else {
+      hotkeyWarning.textContent = "";
+    }
+  }
+
   async function validateSelectedKey() {
     statusDiv.textContent = "Validating key...";
     statusDiv.style.color = "#555";
@@ -162,7 +296,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const cfg = await chrome.storage.local.get([
       "selectedAiService",
       "openaiApiKey",
+      "openaiModel",
       "geminiApiKey",
+      "geminiModel",
       "aimlapiApiKey",
       "aimlapiModel",
       "moonshotApiKey",
@@ -172,9 +308,9 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       let ok = false;
       if (svc === "openai") {
-        ok = await pingOpenAI(cfg.openaiApiKey);
+        ok = await pingOpenAI(cfg.openaiApiKey, cfg.openaiModel || "gpt-4o-mini");
       } else if (svc === "gemini") {
-        ok = await pingGemini(cfg.geminiApiKey);
+        ok = await pingGemini(cfg.geminiApiKey, cfg.geminiModel || "gemini-1.0-pro");
       } else if (svc === "aimlapi") {
         ok = await pingAIMLAPI(cfg.aimlapiApiKey, cfg.aimlapiModel || "gpt-4o-mini");
       } else if (svc === "moonshot") {
@@ -188,7 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  async function pingOpenAI(key) {
+  async function pingOpenAI(key, model) {
     if (!key) return false;
     try {
       const r = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -198,7 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
           Authorization: `Bearer ${key}`
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
+          model: model || "gpt-4o-mini",
           messages: [{ role: "user", content: "ping" }],
           max_tokens: 1,
           temperature: 0
@@ -209,12 +345,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return false;
     }
   }
-  async function pingGemini(key) {
+  async function pingGemini(key, model) {
     if (!key) return false;
     try {
-      const url =
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=" +
-        encodeURIComponent(key);
+      const m = (model || "gemini-1.0-pro").trim();
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent?key=${encodeURIComponent(key)}`;
       const r = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

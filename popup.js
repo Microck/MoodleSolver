@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const configStatusDiv = document.getElementById("configStatus");
   const openOptionsButton = document.getElementById("openOptions");
+  const openShortcutsButton = document.getElementById("openShortcuts");
+  const commandsList = document.getElementById("commandsList");
   const debugLogContainer = document.getElementById("debugLogContainer");
   const clearLogsButton = document.getElementById("clearLogsButton");
 
@@ -38,6 +40,51 @@ document.addEventListener("DOMContentLoaded", () => {
         if (configStatusDiv) configStatusDiv.textContent = "Cannot open options page.";
       }
     });
+  }
+
+  if (openShortcutsButton && chrome.tabs && chrome.tabs.create) {
+    openShortcutsButton.addEventListener("click", () => {
+      try {
+        chrome.tabs.create({ url: "chrome://extensions/shortcuts" });
+      } catch (e) {
+        console.error("Popup: cannot open shortcuts page:", e);
+        if (configStatusDiv) configStatusDiv.textContent = "Cannot open shortcuts page.";
+      }
+    });
+  }
+
+  // render commands and suggested shortcuts dynamically from manifest
+  try {
+    const manifest = chrome.runtime.getManifest?.();
+    const cmds = manifest?.commands || {};
+    if (commandsList) {
+      commandsList.innerHTML = "";
+      Object.entries(cmds).forEach(([id, meta]) => {
+        const li = document.createElement("li");
+        const desc = (meta && meta.description) ? meta.description : id;
+        const suggested = meta && meta.suggested_key && (meta.suggested_key.default || meta.suggested_key.mac);
+        const keyLabel = suggested ? suggested : "user-assignable";
+
+        const descSpan = document.createElement("span");
+        descSpan.className = "cmd-desc";
+        descSpan.textContent = desc;
+
+        const keySpan = document.createElement("span");
+        keySpan.className = "shortcut-key";
+        keySpan.textContent = keyLabel;
+
+        li.appendChild(descSpan);
+        li.appendChild(keySpan);
+        commandsList.appendChild(li);
+      });
+      if (!Object.keys(cmds).length) {
+        const li = document.createElement("li");
+        li.textContent = "No commands defined in manifest.";
+        commandsList.appendChild(li);
+      }
+    }
+  } catch (e) {
+    console.warn("Popup: failed to render commands from manifest:", e);
   }
 
   function displayLogs(logs) {

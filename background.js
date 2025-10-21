@@ -42,7 +42,9 @@ async function getAIConfiguration() {
         "selectedAiService",
         "selectedService",
         "openaiApiKey",
+        "openaiModel",
         "geminiApiKey",
+        "geminiModel",
         "aimlapiApiKey",
         "aimlapiModel",
         "moonshotApiKey",
@@ -235,7 +237,8 @@ const MENU_IDS = {
   ENSURE_PROCESSED: "t3_ensure_processed",
   RESCAN_CURRENT: "t3_rescan_current",
   SHOW_OVERLAY: "t3_show_overlay",
-  CLEAR_DATA: "t3_clear_data"
+  CLEAR_DATA: "t3_clear_data",
+  STEALTH_SHOW: "t3_stealth_show"
 };
 
 function createContextMenus() {
@@ -272,6 +275,12 @@ function createContextMenus() {
       chrome.contextMenus.create({
         id: MENU_IDS.SHOW_OVERLAY,
         title: "Show Answers Overlay",
+        contexts: ["page", "action"],
+        documentUrlPatterns: patterns
+      });
+      chrome.contextMenus.create({
+        id: MENU_IDS.STEALTH_SHOW,
+        title: "Stealth Show Answer Letter",
         contexts: ["page", "action"],
         documentUrlPatterns: patterns
       });
@@ -331,6 +340,37 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       "processedQuizData"
     ]);
     addLog("Stored quiz data cleared via context menu.", "info");
+  } else if (info.menuItemId === MENU_IDS.STEALTH_SHOW) {
+    // Reuse the command handler logic
+    const currentTab = activeTab;
+    const currentQResponse = await new Promise((resolve) => {
+      ensureContentScriptAndSendMessage(
+        currentTab.id,
+        { action: "scrapeCurrentQuestionData" },
+        (data) => resolve(data)
+      );
+    });
+    const { processedQuizData } = await chrome.storage.local.get([
+      "processedQuizData",
+    ]);
+    if (!currentQResponse?.questionText || !Array.isArray(processedQuizData)) {
+      addLog("Stealth show: missing current question text or processed data.", "warn");
+      return;
+    }
+    const matched = processedQuizData.find(
+      (pq) => pq && pq.questionText === currentQResponse.questionText
+    );
+    const idx = typeof matched?.aiChosenOptionIndex === 'number' ? matched.aiChosenOptionIndex : -1;
+    if (idx >= 0) {
+      ensureContentScriptAndSendMessage(
+        currentTab.id,
+        { action: "stealthShowAnswer", indexOrLetter: idx },
+        null
+      );
+      addLog(`Stealth show: requested letter for option index ${idx}.`, "info");
+    } else {
+      addLog("Stealth show: no AI-chosen option index available for this question.", "warn");
+    }
   }
 });
 
@@ -339,12 +379,13 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 function formatDateStamp(d = new Date()) {
   return d.toISOString().replace(/[:.]/g, "-").slice(0, 19);
 }
-async function saveTokenReport(reportText) {
+async function saveTokenReport(reportText, opts = {}) {
   try {
-    const filename = `AI_TokenReport_${formatDateStamp()}.txt`;
+    const prefix = (opts.filenamePrefix || "AI_TokenReport").replace(/[^\w\-]/g, "_");
+    const filename = `${prefix}_${formatDateStamp()}.txt`;
     const url =
       "data:text/plain;charset=utf-8," + encodeURIComponent(reportText);
-    await chrome.downloads.download({ url, filename, saveAs: false });
+    await chrome.downloads.download({ url, filename, saveAs: !!opts.saveAs });
     addLog(`Token report saved: ${filename}`, "info");
   } catch (e) {
     addLog(`Token report save failed: ${e?.message || e}`, "warn");
@@ -405,7 +446,9 @@ function pushStat(stats, { type, model, usage, durationMs }) {
     duration_ms: durationMs
   });
 }
-function formatStatsReport(stats, meta) {
+function formatStatsReport(stats, meta, opts = {}) {
+  const includeDetails = opts.includeDetails !== false; // default true
+  const includeTiming = opts.includeTiming !== false; // default true
   const sums = stats.calls.reduce(
     (acc, c) => {
       acc.prompt += c.prompt_tokens || 0;
@@ -421,20 +464,16 @@ function formatStatsReport(stats, meta) {
     `Run @ ${new Date().toLocaleString()} | Service: ${stats.service}`
   );
   if (meta) lines.push(meta);
-  lines.push(
-    `Calls: ${stats.calls.length}, Tokens p/c/t: ${sums.prompt}/${sums.completion}/${sums.total}, Time: ${(
-      sums.duration / 1000
-    ).toFixed(2)}s`
-  );
-  stats.calls.forEach((c, i) => {
-    lines.push(
-      `#${i + 1} [${c.type}] ${c.model} | tokens p/c/t: ${c.prompt_tokens ?? "?"}/${
-        c.completion_tokens ?? "?"
-      }/${c.total_tokens ?? "?"} | ${((c.duration_ms || 0) / 1000).toFixed(
-        2
-      )}s`
-    );
-  });
+  const summary = includeTiming
+    ? `Calls: ${stats.calls.length}, Tokens p/c/t: ${sums.prompt}/${sums.completion}/${sums.total}, Time: ${(sums.duration / 1000).toFixed(2)}s`
+    : `Calls: ${stats.calls.length}, Tokens p/c/t: ${sums.prompt}/${sums.completion}/${sums.total}`;
+  lines.push(summary);
+  if (includeDetails) {
+    stats.calls.forEach((c, i) => {
+      const base = `#${i + 1} [${c.type}] ${c.model} | tokens p/c/t: ${c.prompt_tokens ?? "?"}/${c.completion_tokens ?? "?"}/${c.total_tokens ?? "?"}`;
+      lines.push(includeTiming ? `${base} | ${((c.duration_ms || 0) / 1000).toFixed(2)}s` : base);
+    });
+  }
   return lines.join("\n");
 }
 
@@ -472,7 +511,7 @@ async function getAIAnswersForBatch(quizDataArray, aiConfig, opts = {}) {
       }
       apiUrl = "https://api.openai.com/v1/chat/completions";
       headers["Authorization"] = `Bearer ${apiKey}`;
-      chosenModel = "gpt-4o-mini";
+      chosenModel = aiConfig.openaiModel || "gpt-4o-mini";
       requestBody = {
         model: chosenModel,
         messages: [{ role: "user", content: prompt }],
@@ -484,7 +523,7 @@ async function getAIAnswersForBatch(quizDataArray, aiConfig, opts = {}) {
         addLog("Gemini Key missing.", "warn");
         continue;
       }
-      chosenModel = "gemini-1.0-pro";
+      chosenModel = aiConfig.geminiModel || "gemini-1.0-pro";
       apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${chosenModel}:generateContent?key=${apiKey}`;
       requestBody = {
         contents: [{ parts: [{ text: prompt }] }],
@@ -1000,9 +1039,28 @@ async function getAllDataAndProcessBatchAI(tabId, currentTabUrl, aiConfig) {
             await chrome.storage.local.set({ processedQuizData });
             addLog("AI processing complete. Results stored.", "info");
 
-            // Token/time report (#9)
-            const report = formatStatsReport(aiStats, `Questions: ${quizData.length}`);
-            await saveTokenReport(report);
+            // Token/time report (#9) gated by options
+            const repCfg = await chrome.storage.local.get([
+              "reportEnabled",
+              "reportIncludeDetails",
+              "reportIncludeTiming",
+              "reportFilenamePrefix",
+              "reportSaveAs"
+            ]);
+            if (repCfg.reportEnabled !== false) {
+              const report = formatStatsReport(
+                aiStats,
+                `Questions: ${quizData.length}`,
+                {
+                  includeDetails: repCfg.reportIncludeDetails !== false,
+                  includeTiming: repCfg.reportIncludeTiming !== false,
+                }
+              );
+              await saveTokenReport(report, {
+                filenamePrefix: repCfg.reportFilenamePrefix || "AI_TokenReport",
+                saveAs: repCfg.reportSaveAs === true,
+              });
+            }
           } else {
             addLog(
               "No valid questions scraped to send to AI.",
@@ -1267,5 +1325,35 @@ chrome.commands.onCommand.addListener(async (command) => {
       { action: "toggleDebugOverlay" },
       null
     );
+  } else if (command === "stealth_show_answer") {
+    // Show the answer letter in the external component without clicking
+    const currentQResponse = await new Promise((resolve) => {
+      ensureContentScriptAndSendMessage(
+        tab.id,
+        { action: "scrapeCurrentQuestionData" },
+        (data) => resolve(data)
+      );
+    });
+    const { processedQuizData } = await chrome.storage.local.get([
+      "processedQuizData",
+    ]);
+    if (!currentQResponse?.questionText || !Array.isArray(processedQuizData)) {
+      addLog("Stealth show: missing current question text or processed data.", "warn");
+      return;
+    }
+    const matched = processedQuizData.find(
+      (pq) => pq && pq.questionText === currentQResponse.questionText
+    );
+    const idx = typeof matched?.aiChosenOptionIndex === 'number' ? matched.aiChosenOptionIndex : -1;
+    if (idx >= 0) {
+      ensureContentScriptAndSendMessage(
+        tab.id,
+        { action: "stealthShowAnswer", indexOrLetter: idx },
+        null
+      );
+      addLog(`Stealth show: requested letter for option index ${idx}.`, "info");
+    } else {
+      addLog("Stealth show: no AI-chosen option index available for this question.", "warn");
+    }
   }
 });

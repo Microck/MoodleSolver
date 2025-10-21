@@ -1,222 +1,338 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AI Service Configuration</title>
+    <title>MoodleSolver • Configuration</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        padding: 20px;
-        width: 540px;
-        background-color: #f4f4f4;
-        color: #333;
+      :root {
+        --brand: #F98112;
+        --brand-600: #e67306;
+        --bg: #ffffff;
+        --page: #f7f7f7;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --focus: #2563eb;
       }
+      * { box-sizing: border-box; }
+  html, body { height: 100%; }
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        margin: 0;
+        background: var(--page);
+        color: var(--text);
+      }
+      .wrap {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 24px 20px 28px;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+      }
+      header .wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-top: 14px;
+        padding-bottom: 14px;
+      }
+      .brand-dot {
+        width: 10px; height: 10px; border-radius: 50%; background: var(--brand);
+      }
+      .logo { width: 24px; height: 24px; }
+      h1 { font-size: 18px; margin: 0; font-weight: 700; }
       h2 {
-        text-align: center;
-        color: #333;
+        margin: 0 0 10px;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
       }
       .container {
-        margin-bottom: 20px;
-        background-color: #fff;
-        padding: 15px;
-        border-radius: 5px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 16px;
+        background-color: var(--bg);
+        padding: 16px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
       }
+      .section-title { display: flex; align-items: center; gap: 8px; }
+      .section-title .bar { width: 4px; height: 14px; background: var(--brand); border-radius: 2px; }
       label {
         display: block;
-        margin-bottom: 8px;
-        font-weight: bold;
+        margin-bottom: 6px;
+        font-weight: 600;
       }
       input[type="text"],
       input[type="password"],
       input[type="number"],
-      select {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        box-sizing: border-box;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+      select, button, .btn {
+        font: inherit;
       }
-      button {
-        background-color: #5cb85c;
-        color: white;
-        padding: 10px 20px;
+      input[type="text"], input[type="password"], input[type="number"], select {
+        width: 100%;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--bg);
+        color: var(--text);
+      }
+      input:focus, select:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background-color: var(--brand);
+        color: #fff;
+        padding: 10px 16px;
         border: none;
-        border-radius: 4px;
+        border-radius: 6px;
         cursor: pointer;
         font-size: 14px;
-        margin-right: 6px;
       }
-      button:hover {
-        background-color: #4cae4c;
-      }
+      .btn.secondary { background: transparent; color: var(--brand); border: 1px solid var(--brand); }
+      .btn:hover { background-color: var(--brand-600); }
+      .btn.secondary:hover { background: rgba(249,129,18,0.08); }
       #status {
-        margin-top: 15px;
-        font-weight: bold;
+        margin-top: 10px;
+        font-weight: 600;
         text-align: center;
       }
-      .hidden {
-        display: none;
-      }
+      .hidden { display: none; }
       small.mono {
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        color: #666;
+        color: var(--muted);
       }
-      .row {
-        display: flex;
-        gap: 10px;
+      .row { display: flex; gap: 10px; }
+      .row > div { flex: 1; }
+      footer.actions { position: sticky; bottom: 0; background: var(--bg); border-top: 1px solid var(--border); }
+      footer .wrap { display: flex; align-items: center; gap: 8px; justify-content: space-between; padding-top: 12px; padding-bottom: 12px; }
+
+      /* Two-column layout to reduce scrolling */
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        align-items: start;
+        /* Allow page scrolling */
       }
-      .row > div {
-        flex: 1;
-      }
+      .grid .container { margin-bottom: 0; }
+
+      /* Info icon */
+      .info { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: rgba(249,129,18,0.15); color: var(--brand); font-size: 12px; font-weight: 700; margin-left: 6px; cursor: help; }
+      .inline { display: inline; }
+      .hotkey { user-select: none; cursor: pointer; }
+      .warning { color: #b91c1c; font-weight: 600; }
     </style>
   </head>
   <body>
-    <h2>Configuration</h2>
+    <header>
+      <div class="wrap">
+        <img src="images/icon48.png" alt="MoodleSolver" class="logo" />
+        <span class="brand-dot" aria-hidden="true"></span>
+        <h1>Configuration</h1>
+      </div>
+    </header>
 
-    <div class="container">
-      <label for="interPageDelay">Inter-Page Scraping Delay (ms):</label>
-      <input
-        type="number"
-        id="interPageDelay"
-        value="800"
-        min="100"
-        step="100"
-      />
-      <small class="mono"
-        >Delay between navigating pages while scraping (e.g., 800-1200ms).</small
-      >
-    </div>
+    <div class="wrap">
+      <div class="grid">
 
-    <div class="container">
-      <label for="aiService">Select AI Service:</label>
-      <select id="aiService">
-        <option value="openai">OpenAI</option>
-        <option value="gemini">Google Gemini</option>
-        <option value="aimlapi">AIMLAPI.com</option>
-        <option value="moonshot">Moonshot Kimi K2</option>
-      </select>
-    </div>
+      <div class="container">
+        <div class="section-title"><span class="bar" aria-hidden="true"></span><h2>General</h2></div>
+        <label for="interPageDelay">Inter-Page Scraping Delay (ms): <span class="info" title="Wait time between navigating quiz pages when scraping. Helps images load and reduces detection.">i</span></label>
+        <input type="number" id="interPageDelay" value="800" min="100" step="100" />
+        <small class="mono">Delay between navigating pages while scraping (e.g., 800–1200ms).</small>
+      </div>
 
-    <div class="container service-config hidden" id="openaiConfig">
-      <label for="openaiApiKey">OpenAI API Key:</label>
-      <input
-        type="password"
-        id="openaiApiKey"
-        placeholder="Enter your OpenAI API key"
-      />
-    </div>
+      <div class="container">
+        <div class="section-title"><span class="bar" aria-hidden="true"></span><h2>Provider</h2></div>
+        <label for="aiService">Select AI Service: <span class="info" title="Choose which AI provider to use for answering.">i</span></label>
+        <select id="aiService" aria-label="AI Provider">
+          <option value="openai">OpenAI</option>
+          <option value="gemini">Google Gemini</option>
+          <option value="aimlapi">AIMLAPI.com</option>
+          <option value="moonshot">Moonshot Kimi K2</option>
+        </select>
+      </div>
 
-    <div class="container service-config hidden" id="geminiConfig">
-      <label for="geminiApiKey">Google Gemini API Key:</label>
-      <input
-        type="password"
-        id="geminiApiKey"
-        placeholder="Enter your Google Gemini API key"
-      />
-    </div>
-
-    <div class="container service-config hidden" id="aimlapiConfig">
-      <label for="aimlapiApiKey">AIMLAPI.com API Key:</label>
-      <input
-        type="password"
-        id="aimlapiApiKey"
-        placeholder="Enter your AIMLAPI.com API key"
-      />
-      <label for="aimlapiModel">AIMLAPI.com Model:</label>
-      <select id="aimlapiModel">
-        <option value="gpt-4o-mini">GPT-4o mini (AIMLAPI)</option>
-        <option value="mistralai/Mistral-7B-Instruct-v0.2">
-          Mistral-7B Instruct v0.2
-        </option>
-        <option value="NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO">
-          Nous Hermes 2 Mixtral
-        </option>
-        <option value="microsoft/Phi-3-mini-4k-instruct">
-          Phi-3 Mini Instruct
-        </option>
-      </select>
-    </div>
-
-    <div class="container service-config hidden" id="moonshotConfig">
-      <label for="moonshotApiKey">Kimi API Key:</label>
-      <input
-        type="password"
-        id="moonshotApiKey"
-        placeholder="Enter your Kimi API key"
-      />
-      <div class="row">
-        <div>
-          <label for="moonshotModelText">Text Model:</label>
-          <input type="text" id="moonshotModelText" value="kimi-k2-0905-preview" />
-        </div>
-        <div>
-          <label for="moonshotModelVision">Vision Model:</label>
-          <input
-            type="text"
-            id="moonshotModelVision"
-            value="moonshot-v1-128k-vision-preview"
-          />
+      <div class="container service-config hidden" id="openaiConfig">
+        <div class="section-title"><span class="bar" aria-hidden="true"></span><h2>OpenAI</h2></div>
+        <label for="openaiApiKey">OpenAI API Key: <span class="info" title="API key from platform.openai.com.">i</span></label>
+        <input type="password" id="openaiApiKey" placeholder="Enter your OpenAI API key" />
+        <div class="row">
+          <div>
+            <label for="openaiModel">Text Model: <span class="info" title="Model ID to use for text-only questions.">i</span></label>
+            <input type="text" id="openaiModel" value="gpt-4o-mini" />
+          </div>
         </div>
       </div>
-      <small class="mono"
-        >Vision is used only for questions that contain images.</small
-      >
-    </div>
 
-    <div class="container">
-      <label>Stealth Scanning:</label>
-      <div>
-        <input type="checkbox" id="stealthScanEnabled" />
-        <label for="stealthScanEnabled" style="display: inline"
-          >Scan in background</label
-        >
-      </div>
-      <label for="stealthScanMode">Mode:</label>
-      <select id="stealthScanMode">
-        <option value="backgroundTab">Background tab (same window)</option>
-        <option value="minimizedWindow">Minimized window</option>
-      </select>
-      <div>
-        <input type="checkbox" id="stealthCloseOnFinish" checked />
-        <label for="stealthCloseOnFinish" style="display: inline"
-          >Close when done</label
-        >
-      </div>
-    </div>
-
-    <div class="container">
-      <label>Safety Toggles:</label>
-      <div>
-        <input type="checkbox" id="dryRun" />
-        <label for="dryRun" style="display: inline">Dry-run (no clicks)</label>
-      </div>
-      <div class="row">
-        <div>
-          <label for="slowMoAnswerDelay">Slow-mo answering (ms):</label>
-          <input type="number" id="slowMoAnswerDelay" value="2000" min="0" />
-        </div>
-        <div>
-          <label for="maxPagesPerRun">Max pages per run (0=all):</label>
-          <input type="number" id="maxPagesPerRun" value="0" min="0" />
+      <div class="container service-config hidden" id="geminiConfig">
+        <div class="section-title"><span class="bar" aria-hidden="true"></span><h2>Google Gemini</h2></div>
+        <label for="geminiApiKey">Google Gemini API Key: <span class="info" title="API key from Google AI Studio.">i</span></label>
+        <input type="password" id="geminiApiKey" placeholder="Enter your Google Gemini API key" />
+        <div class="row">
+          <div>
+            <label for="geminiModel">Text Model: <span class="info" title="Model ID to use for text-only questions.">i</span></label>
+            <input type="text" id="geminiModel" value="gemini-1.0-pro" />
+          </div>
         </div>
       </div>
-      <small class="mono"
-        >Slow-mo applies to sequential auto-answering. Max pages limits scraping.</small
-      >
-    </div>
 
-    <div class="container">
-      <label>Import / Export Config:</label>
-      <button id="exportConfig">Export</button>
-      <button id="importConfig">Import</button>
-      <input id="importFile" type="file" accept=".json" class="hidden" />
-    </div>
+      <div class="container service-config hidden" id="aimlapiConfig">
+        <div class="section-title"><span class="bar" aria-hidden="true"></span><h2>AIMLAPI.com</h2></div>
+        <label for="aimlapiApiKey">AIMLAPI.com API Key: <span class="info" title="API key from AIMLAPI.com dashboard.">i</span></label>
+        <input type="password" id="aimlapiApiKey" placeholder="Enter your AIMLAPI.com API key" />
+        <label for="aimlapiModel">AIMLAPI.com Model: <span class="info" title="Model ID routed via AIMLAPI.com.">i</span></label>
+        <select id="aimlapiModel">
+          <option value="gpt-4o-mini">GPT-4o mini (AIMLAPI)</option>
+          <option value="mistralai/Mistral-7B-Instruct-v0.2">Mistral-7B Instruct v0.2</option>
+          <option value="NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO">Nous Hermes 2 Mixtral</option>
+          <option value="microsoft/Phi-3-mini-4k-instruct">Phi-3 Mini Instruct</option>
+        </select>
+      </div>
 
-    <div class="container">
-      <button id="saveConfig">Save Configuration</button>
-      <button id="validateKeys">Validate Keys</button>
-      <div id="status"></div>
+      <div class="container service-config hidden" id="moonshotConfig">
+        <div class="section-title"><span class="bar" aria-hidden="true"></span><h2>Moonshot</h2></div>
+        <label for="moonshotApiKey">Kimi API Key: <span class="info" title="API key from moonshot.ai.">i</span></label>
+        <input type="password" id="moonshotApiKey" placeholder="Enter your Kimi API key" />
+        <div class="row">
+          <div>
+            <label for="moonshotModelText">Text Model: <span class="info" title="Model ID for text-only questions.">i</span></label>
+            <input type="text" id="moonshotModelText" value="kimi-k2-0905-preview" />
+          </div>
+          <div>
+            <label for="moonshotModelVision">Vision Model: <span class="info" title="Model ID for image-based questions.">i</span></label>
+            <input type="text" id="moonshotModelVision" value="moonshot-v1-128k-vision-preview" />
+          </div>
+        </div>
+        <small class="mono">Vision is used only for questions that contain images.</small>
+      </div>
+
+      <div class="container">
+        <div class="section-title"><span class="bar" aria-hidden="true"></span><h2>Stealth Scanning</h2></div>
+        <div>
+          <input type="checkbox" id="stealthScanEnabled" />
+          <label for="stealthScanEnabled" style="display: inline">Scan in background <span class="info" title="Run the scan in a background tab or minimized window to reduce visibility.">i</span></label>
+        </div>
+        <label for="stealthScanMode">Mode: <span class="info" title="Choose background tab (same window) or minimized separate window.">i</span></label>
+        <select id="stealthScanMode">
+          <option value="backgroundTab">Background tab (same window)</option>
+          <option value="minimizedWindow">Minimized window</option>
+        </select>
+        <div>
+          <input type="checkbox" id="stealthCloseOnFinish" checked />
+          <label for="stealthCloseOnFinish" style="display: inline">Close when done</label>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="section-title"><span class="bar" aria-hidden="true"></span><h2>Safety</h2></div>
+        <div>
+          <input type="checkbox" id="dryRun" />
+          <label for="dryRun" style="display: inline">Dry-run (no clicks) <span class="info" title="Simulates selecting answers without actually clicking anything on the page.">i</span></label>
+        </div>
+        <div class="row">
+          <div>
+            <label for="slowMoAnswerDelay">Slow-mo answering (ms): <span class="info" title="Delay before auto-clicking answers, to look more human and avoid detection.">i</span></label>
+            <input type="number" id="slowMoAnswerDelay" value="2000" min="0" />
+          </div>
+          <div>
+            <label for="maxPagesPerRun">Max pages per run (0=all): <span class="info" title="Limits how many quiz pages to process per run.">i</span></label>
+            <input type="number" id="maxPagesPerRun" value="0" min="0" />
+          </div>
+        </div>
+        <small class="mono">Slow-mo applies to sequential auto-answering. Max pages limits scraping.</small>
+      </div>
+
+      <div class="container">
+        <div class="section-title"><span class="bar" aria-hidden="true"></span><h2>Reporting</h2></div>
+        <div>
+          <input type="checkbox" id="reportEnabled" checked />
+          <label for="reportEnabled" class="inline">Enable Token & Time report <span class="info" title="Save a summary of token usage and time to your Downloads folder.">i</span></label>
+        </div>
+        <div>
+          <input type="checkbox" id="reportIncludeDetails" checked />
+          <label for="reportIncludeDetails" class="inline">Include per-call details <span class="info" title="Include a line per API call with tokens and duration.">i</span></label>
+        </div>
+        <div>
+          <input type="checkbox" id="reportIncludeTiming" checked />
+          <label for="reportIncludeTiming" class="inline">Include total time <span class="info" title="Include overall elapsed time in the summary line.">i</span></label>
+        </div>
+        <div class="row">
+          <div>
+            <label for="reportFilenamePrefix">Filename prefix <span class="info" title="Prefix for the saved report filename.">i</span></label>
+            <input type="text" id="reportFilenamePrefix" value="AI_TokenReport" />
+          </div>
+          <div>
+            <label for="reportSaveAs">Save dialog <span class="info" title="Ask where to save instead of auto-saving.">i</span></label>
+            <select id="reportSaveAs">
+              <option value="false" selected>Auto-save</option>
+              <option value="true">Ask where to save</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="section-title"><span class="bar" aria-hidden="true"></span><h2>Hotkeys (Page-level)</h2></div>
+        <small class="mono">These work when a quiz page is focused. For global shortcuts, set them at chrome://extensions/shortcuts. Conflicts are highlighted below.</small>
+        <div class="row">
+          <div>
+            <label for="hk_get_all_data">Get all data <span class="info" title="Scrape all pages and run AI.">i</span></label>
+            <input type="text" id="hk_get_all_data" class="hotkey" placeholder="Alt+Shift+G" readonly />
+          </div>
+          <div>
+            <label for="hk_answer_current">Answer current <span class="info" title="Apply AI answer on this page.">i</span></label>
+            <input type="text" id="hk_answer_current" class="hotkey" placeholder="Alt+Shift+A" readonly />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="hk_answer_all">Ensure all answered <span class="info" title="Process all pages with AI (no clicking).">i</span></label>
+            <input type="text" id="hk_answer_all" class="hotkey" placeholder="Alt+Shift+E" readonly />
+          </div>
+          <div>
+            <label for="hk_clear">Clear stored data <span class="info" title="Remove cached quiz data and AI answers.">i</span></label>
+            <input type="text" id="hk_clear" class="hotkey" placeholder="Alt+Shift+K" readonly />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="hk_rescan">Rescan current page <span class="info" title="Re-scrape only the current page.">i</span></label>
+            <input type="text" id="hk_rescan" class="hotkey" placeholder="Alt+Shift+S" readonly />
+          </div>
+          <div>
+            <label for="hk_overlay">Toggle debug overlay <span class="info" title="Show or hide the on-screen log overlay.">i</span></label>
+            <input type="text" id="hk_overlay" class="hotkey" placeholder="Alt+Shift+D" readonly />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="hk_stealth_show">Stealth show answer letter <span class="info" title="Display the chosen answer letter in the external 'Ir a...' dropdown (no click).">i</span></label>
+            <input type="text" id="hk_stealth_show" class="hotkey" placeholder="Alt+Shift+L" readonly />
+          </div>
+        </div>
+        <div id="hotkeyWarning" class="warning" aria-live="polite"></div>
+      </div>
+
+      <div class="container">
+        <div class="section-title"><span class="bar" aria-hidden="true"></span><h2>Import / Export</h2></div>
+        <button class="btn secondary" id="exportConfig">Export</button>
+        <button class="btn secondary" id="importConfig">Import</button>
+        <input id="importFile" type="file" accept=".json" class="hidden" />
+      </div>
+
+      <div class="container">
+        <div class="section-title"><span class="bar" aria-hidden="true"></span><h2>Actions</h2></div>
+        <button class="btn" id="saveConfig">Save Configuration</button>
+        <button class="btn secondary" id="validateKeys">Validate Keys</button>
+        <div id="status" role="status" aria-live="polite"></div>
+      </div>
+
     </div>
 
     <script src="options.js"></script>
