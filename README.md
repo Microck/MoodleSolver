@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/Microck/MoodleSolver">
-    <img src="images/icon128.png" alt="MoodleSolver Logo" width="300">
+    <img src="images/icon128.png" alt="MoodleSolver Logo" width="150">
   </a>
 </p>
 
@@ -19,7 +19,7 @@
 - load unpacked in `chrome://extensions`
 - open options → set api provider + key
 - open a moodle quiz page
-- press shortcut → scrape → run ai → run ai → enjoy
+- press shortcut → scrape → run ai → enjoy
 
 ---
 
