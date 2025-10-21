@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "MoodleSolver",
-  "version": "1.7.0",
+  "version": "2.0.0",
   "description": "Assists in solving Moodle-based assessments with stealth scraping, text+vision AI, and detailed logging.",
   "permissions": [
     "activeTab",
@@ -16,9 +16,7 @@
     "https://api.openai.com/*",
     "https://generativelanguage.googleapis.com/*",
     "https://api.aimlapi.com/*",
-    "https://api.moonshot.ai/*",
-    "https://api-sg.moonshot.ai/*",
-    "https://api.moonshot.cn/*"
+    "https://api.moonshot.ai/*"
   ],
   "background": { "service_worker": "background.js" },
   "content_scripts": [
@@ -44,31 +42,29 @@
   },
   "commands": {
     "get_all_data": {
-      "suggested_key": { "default": "Alt+Shift+G", "mac": "Option+Shift+G" },
+      "suggested_key": { "default": "Alt+Shift+G" },
       "description": "Scrape all quiz questions & run AI processing (stealth if enabled)."
     },
     "answer_current_question": {
-      "suggested_key": { "default": "Alt+Shift+A", "mac": "Option+Shift+A" },
-      "description": "Select the AI‑calculated answer for the current question page."
+      "suggested_key": { "default": "Alt+Shift+A" },
+      "description": "Select the AI-calculated answer for the current question page."
     },
     "answer_all_questions": {
-      "suggested_key": { "default": "Alt+Shift+E", "mac": "Option+Shift+E" },
+      "suggested_key": { "default": "Alt+Shift+E" },
       "description": "Ensure all questions are scraped & processed by AI (no clicks)."
     },
     "clear_stored_data": {
-      "suggested_key": { "default": "Alt+Shift+K", "mac": "Option+Shift+K" },
+      "suggested_key": { "default": "Alt+Shift+K" },
       "description": "Clear all stored quiz data and AI answers."
     },
     "rescan_current_page": {
-      "suggested_key": { "default": "Alt+Shift+S", "mac": "Option+Shift+S" },
-      "description": "Re‑scrape only the current question page and refresh cache."
+      "description": "Re-scrape only the current question page and refresh cache."
     },
     "toggle_debug_overlay": {
-      "suggested_key": { "default": "Alt+Shift+D", "mac": "Option+Shift+D" },
-      "description": "Toggle the on‑screen debug log overlay."
+      "description": "Toggle the on-screen debug log overlay."
     },
     "stealth_show_answer": {
-      "description": "Show the AI‑chosen answer letter in the external dropdown (no click)."
+      "description": "Show the AI-chosen answer letter in the external dropdown (no click)."
     }
   }
 }
