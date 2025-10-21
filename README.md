@@ -106,7 +106,7 @@ open the options page by right‑clicking the extension icon → **options**.
 | setting group | configuration details |
 | :--- | :--- |
 | **general** | **inter‑page delay (ms):** `800–1200` recommended to let moodle images fully load before scraping. |
-| **ai service** | choose your provider and enter the matching **api key**. you can set both a **text** and **vision** model name. for example: `gpt‑4o‑mini` (text) and `moonshot‑v1‑128k‑vision‑preview` (vision). |
+| **ai service** | choose your provider and enter the matching **api key**. you can set both a **text** and **vision** model name. |
 | **stealth scanning** | scrape in a **background tab** or **minimized window**; auto‑retries if the tab is throttled or lost focus. |
 | **safety toggles** | enable `dry‑run` to prevent clicks, set a `slow‑mo` delay between answers, and cap how many pages to process per run. |
 | **reporting** | enable token/time report saving after each run; customize filename prefix, include timing details, and choose auto‑save or prompt. |
