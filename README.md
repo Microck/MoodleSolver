@@ -7,7 +7,7 @@
 <p align="center">a chrome extension that scrapes moodle quiz pages, routes questions to text or vision models, and helps you apply answers with stealth.</p>
 
 <p align="center">
-  <a href="https://github.com/Microck/MoodleSolver/LICENSE"><img alt="License" src="https://img.shields.io/github/license/Microck/MoodleSolver?style=flat-square" /></a>
+  <a href="https://github.com/Microck/MoodleSolver/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/Microck/MoodleSolver?style=flat-square" /></a>
   <a href="https://github.com/Microck/MoodleSolver/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/Microck/MoodleSolver?style=flat-square" /></a>
   <a href="https://github.com/Microck/MoodleSolver/issues"><img alt="Issues" src="https://img.shields.io/github/issues/Microck/MoodleSolver?style=flat-square" /></a>
 </p>
