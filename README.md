@@ -1,218 +1,200 @@
-# moodlesolver
+<p align="center">
+  <a href="https://github.com/Microck/MoodleSolver">
+    <img src="images/icon128.png" alt="MoodleSolver Logo" width="150">
+  </a>
+</p>
 
-![moodlesolver logo](images/icon128.png)
+<p align="center">a chrome extension that scrapes moodle quiz pages, routes questions to text or vision models, and helps you apply answers with stealth.</p>
 
-a chrome extension that scrapes moodle quiz pages, routes questions to text or vision models, and helps you apply answers with safety controls. it supports stealth scanning, token and time reports, and a discreet answer letter display.
+<p align="center">
+  <a href="https://github.com/Microck/MoodleSolver/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/Microck/MoodleSolver?style=flat-square" /></a>
+  <a href="https://github.com/Microck/MoodleSolver/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/Microck/MoodleSolver?style=flat-square" /></a>
+  <a href="https://github.com/Microck/MoodleSolver/issues"><img alt="Issues" src="https://img.shields.io/github/issues/Microck/MoodleSolver?style=flat-square" /></a>
+</p>
 
-> [!warning]
-> use this only where you have authorization. this is for research, testing, and study on permitted platforms. do not use it for cheating.
-
-## table of contents
-
-- [moodlesolver](#moodlesolver)
-  - [table of contents](#table-of-contents)
-  - [quickstart](#quickstart)
-  - [features](#features)
-    - [supported ai providers](#supported-ai-providers)
-  - [how it works](#how-it-works)
-  - [configuration](#configuration)
-    - [general](#general)
-    - [ai service](#ai-service)
-    - [reporting](#reporting)
-    - [management](#management)
-  - [controls and hotkeys](#controls-and-hotkeys)
-    - [right click context menu](#right-click-context-menu)
-  - [stealth show answer letter](#stealth-show-answer-letter)
-  - [token and time reporting](#token-and-time-reporting)
-  - [environment and compatibility](#environment-and-compatibility)
-  - [troubleshooting and faq](#troubleshooting-and-faq)
-  - [security and ethics](#security-and-ethics)
-  - [development notes](#development-notes)
+---
 
 ## quickstart
 
-1. open chrome and go to chrome://extensions
-2. enable developer mode
-3. click load unpacked and select the project root folder
-4. pin the extension to the toolbar
-5. open a moodle quiz page that matches the target host
-6. press your shortcut to scrape and run ai
+- load unpacked in `chrome://extensions`
+- open options → set api provider + key
+- open a moodle quiz page
+- press shortcut → scrape → run ai → enjoy
 
-> [!tip]
-> you can assign or change shortcuts at chrome://extensions/shortcuts. the options page also shows hotkeys you set there.
+---
 
 ## features
 
+- unified 2.0 core (faster routing + safer storage)
 - intelligent model routing for text and images
-- private image inlining so vision models can see moodle images
+- private image inlining (base64 encoding for protected moodle media)
 - stealth scanning in background tabs or minimized windows
-- answer application with dry run and slow motion delay
-- rescan current page without a full run
+- multiple scraping and answering options
 - on screen debug overlay
 - token and time reporting to downloads as a text file
 - right click context menu for common actions
-- configuration import or export
+- configuration import or export (json)
 - custom model names for providers
 
 ### supported ai providers
 
-- openai api
-- google gemini api
-- aimlapi dot com (openai compatible)
-- moonshot kimi k2 text and vision
+- openai (`chat/completions`)
+- google gemini (`generateContent`)
+- aimlapi.com (openai‑compatible)
+- moonshot kimi k2 (`text` + `vision`)
 
 > [!note]
-> for quizzes with private moodle images, moonshot vision is recommended. the extension is optimized to inline private images to improve the vision response.
+> for quizzes with private moodle images, moonshot vision is recommended. the extension automatically embeds moodle‑hosted images as base64 to ensure visual context.
+
+---
 
 ## how it works
 
-1. scrape
+1. **scrape**  
+   the extension visits quiz pages (visible or stealth), collecting question text, choice options, and all embedded media. when moodle images are private, they’re fetched directly by the browser and converted to base64.
 
-- the extension scrapes question text, options, and images from quiz pages
-- images that are private or not externally reachable are fetched by the browser and converted to base64
+2. **route**  
+   *text‑only questions* are grouped into a batch sent to the text model.  
+   *questions containing images* are sent individually to the vision model with the base64 data inline.
 
-1. route
+3. **store**  
+   parsed ai responses are mapped back to their questions and stored locally as `processedQuizData`.
 
-- text only questions go in a single batch to a text model
-- questions with images are sent individually to a vision model with images embedded
+4. **apply**  
+   when triggered, the extension matches stored answers to on‑page options and marks them automatically. unless `dry‑run` mode is enabled, in which case only logs are generated.
 
-1. store
+large quizzes are auto‑sliced to respect token limits. all operations run locally except model inference calls to your configured ai provider.
 
-- responses are parsed and mapped back to questions and saved locally
+---
 
-1. apply
+## installation
 
-- on demand, the stored answer for the current page is selected unless dry run is enabled
+prereqs:
+- chrome or chromium‑based browser
+- valid api key for your selected provider
 
-> [!tip]
-> large quizzes are sliced automatically to stay within context limits. this keeps calls efficient and predictable.
+steps:
+1. open chrome → chrome://extensions
+2. enable "developer mode"
+3. click "load unpacked"
+4. select the moodlesolver root folder
+5. open options → set keys + preferences
+
+
+<p align="center">
+  <img
+    src="https://github.com/user-attachments/assets/26e7f54a-2763-4d95-bc0b-c6c59a1e766f"
+    alt="extensions"
+    width="1919"
+    height="598">
+</p>
+
+---
 
 ## configuration
 
-open the options page via the extension menu.
+open the options page by right‑clicking the extension icon → **options**.
 
-### general
+<p align="center">
+  <img
+    src="https://github.com/user-attachments/assets/5e7c7fe8-1f31-40d4-a816-7f8a2a00d99b"
+    alt="config"
+    width="auto"
+    height="700">
+</p>
 
-- inter page delay in milliseconds
-- enable stealth scanning
-- answer delay for slow motion click simulation
-- dry run so no clicks are made
-- max pages per run to cap how far a scan goes
+| setting group | configuration details |
+| :--- | :--- |
+| **general** | **inter‑page delay (ms):** `800–1200` recommended to let moodle images fully load before scraping. |
+| **ai service** | choose your provider and enter the matching **api key**. you can set both a **text** and **vision** model name. |
+| **stealth scanning** | scrape in a **background tab** or **minimized window**; auto‑retries if the tab is throttled or lost focus. |
+| **safety toggles** | enable `dry‑run` to prevent clicks, set a `slow‑mo` delay between answers, and cap how many pages to process per run. |
+| **reporting** | enable token/time report saving after each run; customize filename prefix, include timing details, and choose auto‑save or prompt. |
+| **management** | import/export settings as json. run `validate keys` to test provider connectivity instantly. |
 
-### ai service
+> *tip: adjust or add shortcuts anytime at `chrome://extensions/shortcuts`.*
 
-- choose provider and enter your api key
-- define the text model and vision model names where applicable
+---
 
-> [!tip]
-> you can validate keys directly in the options page before running any scans.
+## controls & hotkeys
 
-### reporting
-
-- enable or disable token and time report saving
-- include details for deeper breakdowns
-- include timing details
-- filename prefix for report files
-- prompt a save dialog or save automatically
-
-### management
-
-- import or export settings as json
-
-## controls and hotkeys
-
-chrome defaults are provided for common actions. you can reassign them at chrome://extensions/shortcuts.
+chrome restricts extensions to **four predefined shortcuts**. additional actions can be user‑assigned at `chrome://extensions/shortcuts`.
 
 | action | default shortcut |
-| --- | --- |
-| scrape all data and run ai | alt + shift + g |
-| answer current page | alt + shift + a |
-| ensure all data processed | alt + shift + e |
-| clear stored data | alt + shift + k |
-| rescan current page | alt + shift + s |
-| toggle on screen debug overlay | alt + shift + d |
-| stealth show answer letter | user assignable |
+| :--- | :--- |
+| **scrape all data & run ai** | `alt + shift + g` |
+| **answer current page** | `alt + shift + a` |
+| **ensure all data is processed** | `alt + shift + e` |
+| **clear stored data** | `alt + shift + k` |
+| *rescan current page* | *(user‑assignable)* |
+| *toggle on‑screen debug overlay* | *(user‑assignable)* |
+| *stealth show answer letter* | *(user‑assignable)* |
 
-> [!note]
-> the stealth show answer letter command is intentionally unbound by default. assign it when you want a quiet, display only cue without clicking anything.
+---
 
-### right click context menu
+### right‑click context menu
 
-when you are on a moodle quiz page you will see menu entries for:
+on moodle quiz pages, right‑click anywhere to open quick actions:
 
-- run stealth scan
-- answer current page
-- ensure data processed
-- rescan current page
-- stealth show answer letter
-- clear stored data
+- run stealth scan now  
+- answer current page  
+- ensure data processed  
+- rescan current page  
+- stealth show answer letter  
+- clear stored data  
 
-## stealth show answer letter
+<p align="center">
+  <img
+    src="https://github.com/user-attachments/assets/b26cdfe1-aa7e-4baa-87e8-42d22caf5498"
+    alt="right-click context menu"
+    width="568"
+    height="315">
+</p>
 
-this is a separate action that does not click anything. it displays the ai chosen answer letter in a distinct external dropdown on the page. it uses lowercase letters and stays out of the quiz options list to reduce noise.
+---
 
-- target element is the jump to activity dropdown used by moodle navigation
-- the letter appears alongside the existing label so you do not lose native context
-- works well as a quick glance cue when you are not applying answers
+## token & time reporting
 
-> [!tip]
-> bind a shortcut for stealth show answer letter and use it independently of answer current page. this keeps display separate from action.
+after every ai run, a report is saved in your **downloads** folder:
 
-## token and time reporting
+`AI_TokenReport_YYYY‑MM‑DDTHH‑MM‑SS.txt`
 
-if enabled, a report is saved under downloads with a name like this:
+includes:
 
-```text
-AI_TokenReport_YYYY-MM-DDTHH-MM-SS.txt
-```
+- provider and model used  
+- token usage (prompt / completion / total)  
+- runtime duration  
+- optional detailed timing if enabled in options
 
-you can configure the filename prefix, whether to include details and timing, and whether to prompt a save dialog.
+---
 
-> [!note]
-> reporting is gated behind the options you set so you stay in control of what gets written to disk.
+## troubleshooting
 
-## environment and compatibility
+- **commands not responding**  
+  verify you are on a valid moodle quiz page (`.../mod/quiz/attempt.php`) and that it’s fully loaded.  
+- **“receiving end does not exist”**  
+  reload the page or wait a few seconds before retrying.  
+- **“current question not found”**  
+  clear stored data and rescan for fresh mapping.  
+- **vision model fails**  
+  check api key, provider permissions, and ensure allowed origins include your moodle host.  
+- **stealth scan stalls**  
+  some moodle setups block background tabs; disable stealth scanning and run visibly.  
+- **need run logs on‑page**  
+  toggle the on‑screen debug overlay (`alt + shift + d`).  
 
-- browser: chrome and other chromium based browsers
-- extension format: manifest v3
-- tech stack: pure javascript with no build step
-- targeted host: educastur aulas virtuales by default
-- content script matches: only educastur quiz attempt pages by default
+---
 
-if you need to adapt this to another moodle theme or host, update the selectors in the content script where question text and options are scraped. the default selectors are tuned for educastur.
+## ethics & security
 
-## troubleshooting and faq
+- data stays local except outbound api requests  
+- api keys stored using chrome encrypted storage  
+- no logs, telemetry, or external data collection  
+- designed for authorized research and testing only  
+- do **not** use for cheating or academic misconduct  
 
-- commands do nothing  
-  ensure you are on a moodle quiz attempt page that matches the configured host and that the page is fully loaded
-- error about receiving end does not exist  
-  wait a moment and try again, or rescan the current page
-- can not find current question text when answering  
-  clear stored data and do a fresh scan, then retry
-- vision model returns errors  
-  check the options page and validate keys, confirm host permissions include your provider url, and check the background logs
-- stealth scan fails or stalls  
-  some sites block multi tab attempts. disable stealth scanning and run visibly if needed
-- can i see the logs on the page  
-  yes, toggle the on screen debug overlay
+---
 
-> [!tip]
-> the debug overlay shows background and content logs in a rotating buffer. it makes troubleshooting much easier when you are testing.
+## license
 
-## security and ethics
-
-- api keys are stored via chrome storage and never logged
-- data remains local unless sent to an ai provider you choose
-- do not use this for cheating or on unauthorized content
-- you are responsible for compliance with platform terms and applicable laws
-
-## development notes
-
-- repository layout is flat and has no build
-- background.js is a service worker for orchestration and ai calls
-- content_script.js handles scraping, display only cues, and answer application
-- options.html and options.js manage settings, hotkeys display, and validation
-- manifest.json lists permissions, host permissions, and commands
-
-> [!tip]
-> when you change the background script, manifest, or popup files, reload the extension card in chrome. for content_script.js and styles.css, reload the target page.
+mit © microck — see [license](LICENSE)
